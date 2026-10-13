@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+/* decide before the page paints: remembered device skips the login */
+try{
+  document.documentElement.classList.add(localStorage.getItem('us_auth')==='1' ? 'authed' : 'locked');
+}catch(e){ document.documentElement.classList.add('locked'); }
+</script>
+<title>40 Days of Us 💗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#fff7f2;
+  --blush:#ffd9e2;
+  --rose:#e2677f;
+  --deep:#7a2c43;
+  --wine:#4a1a2b;
+  --gold:#d9a35b;
+  --ink:#4b2a33;
+  --shadow:0 12px 30px rgba(122,44,67,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{
+  font-family:'Poppins',sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,#fff7f2 0%,#ffeaf0 50%,#fff3ea 100%);
+  min-height:100vh;overflow-x:hidden;
+}
+h1,h2,h3{font-family:'Playfair Display',serif}
+.script{font-family:'Dancing Script',cursive}
+
+/* ---------- NAVBAR ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;
+  background:rgba(255,247,242,.78);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(226,103,127,.2);
+}
+.logo{font-family:'Dancing Script',cursive;font-size:1.7rem;color:var(--rose);text-decoration:none}
+.nav-links{display:flex;gap:26px;list-style:none}
+.nav-links a{
+  text-decoration:none;color:var(--deep);font-size:.92rem;font-weight:500;
+  padding:6px 2px;position:relative;
+}
+.nav-links a::after{
+  content:'';position:absolute;left:0;bottom:-2px;height:2px;width:0;
+  background:var(--rose);transition:width .3s;
+}
+.nav-links a:hover::after{width:100%}
+.burger{display:none;background:none;border:0;font-size:1.7rem;cursor:pointer;color:var(--deep)}
+@media(max-width:860px){
+  .burger{display:block}
+  .nav-links{
+    position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;
+    background:rgba(255,247,242,.97);max-height:0;overflow:hidden;transition:max-height .35s;
+  }
+  .nav-links.show{max-height:300px;border-bottom:1px solid rgba(226,103,127,.2)}
+  .nav-links a{display:block;padding:16px 28px}
+}
+
+/* ---------- HERO ---------- */
+#home{
+  position:relative;min-height:100vh;padding:110px 20px 60px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden;
+}
+.hero-bg-hearts span{
+  position:absolute;bottom:-40px;opacity:.5;animation:floatUp linear infinite;pointer-events:none;
+}
+@keyframes floatUp{
+  0%{transform:translateY(0) rotate(0);opacity:0}
+  10%{opacity:.5}
+  100%{transform:translateY(-110vh) rotate(25deg);opacity:0}
+}
+.eyebrow{letter-spacing:.3em;text-transform:uppercase;font-size:.75rem;color:var(--rose);font-weight:500}
+#home h1{
+  font-size:clamp(2.2rem,6vw,4.2rem);color:var(--deep);margin:10px 0 8px;line-height:1.15;
+}
+#home h1 em{font-family:'Dancing Script',cursive;color:var(--rose);font-style:normal;font-weight:700}
+.sub{max-width:560px;font-weight:300;font-size:1.05rem;margin-bottom:22px}
+.counter{
+  display:inline-flex;gap:10px;align-items:center;
+  background:#fff;border-radius:999px;padding:10px 22px;box-shadow:var(--shadow);
+  color:var(--deep);font-weight:500;margin-bottom:34px;
+}
+.hero-photo{
+  width:min(1000px,94vw);aspect-ratio:16/9;border-radius:28px;overflow:hidden;
+  box-shadow:0 24px 60px rgba(122,44,67,.3);border:8px solid #fff;
+  background:linear-gradient(135deg,#ffc4d3,#ffe3c9);
+  display:flex;align-items:center;justify-content:center;position:relative;
+}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-photo .placeholder{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:var(--deep);gap:8px;font-size:1rem;
+}
+.hero-photo .placeholder b{font-size:3rem}
+.scroll-hint{margin-top:30px;color:var(--rose);animation:bounce 2s infinite;text-decoration:none;font-size:.9rem}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* floating good-morning / good-night messages */
+#float-layer{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.float-msg{
+  position:absolute;bottom:-80px;pointer-events:auto;cursor:pointer;
+  background:rgba(255,255,255,.92);color:var(--deep);
+  padding:12px 20px;border-radius:22px 22px 22px 6px;max-width:260px;
+  box-shadow:var(--shadow);font-size:.95rem;line-height:1.4;text-align:left;
+  animation:rise var(--dur) ease-in forwards;
+  border:1px solid rgba(226,103,127,.25);
+}
+.float-msg.pm{background:rgba(74,26,43,.92);color:#ffe9ef;border-color:rgba(217,163,91,.5)}
+.float-msg.pop{animation:pop .35s forwards}
+@keyframes rise{
+  0%{transform:translate(0,0) scale(.8);opacity:0}
+  8%{opacity:1;transform:translate(0,-40px) scale(1)}
+  50%{transform:translate(var(--drift),-50vh)}
+  100%{transform:translate(calc(var(--drift) * -.6),-115vh);opacity:.9}
+}
+@keyframes pop{to{transform:scale(1.6);opacity:0}}
+
+/* ---------- SECTIONS ---------- */
+section.block{padding:90px 20px;max-width:1100px;margin:0 auto;text-align:center}
+section.block h2{font-size:clamp(1.8rem,4vw,2.8rem);color:var(--deep);margin-bottom:8px}
+section.block .lead{font-weight:300;max-width:560px;margin:0 auto 40px}
+
+/* ---------- 40 CARDS ---------- */
+#days{padding:80px 20px;max-width:760px;margin:0 auto;text-align:center}
+#days h2{font-size:clamp(1.8rem,4vw,2.8rem);color:var(--deep);margin-bottom:8px}
+#days .lead{font-weight:300;margin-bottom:40px}
+.cards{display:flex;flex-direction:column;gap:22px}
+.card{
+  position:relative;border-radius:26px;padding:26px 28px;text-align:left;overflow:hidden;
+  box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s;
+  color:var(--wine);
+}
+.card::before{ /* soft shine */
+  content:'';position:absolute;top:-60%;right:-30%;width:70%;height:200%;
+  background:radial-gradient(circle,rgba(255,255,255,.55),transparent 65%);pointer-events:none;
+}
+.card .deco{
+  position:absolute;right:20px;top:14px;font-size:3.2rem;opacity:.9;
+  filter:drop-shadow(0 4px 6px rgba(0,0,0,.15));
+}
+.card-top{display:flex;flex-direction:column;gap:2px;position:relative}
+.card .day{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700}
+.card .date{font-size:.82rem;opacity:.75}
+.card .hint{margin-top:12px;font-family:'Dancing Script',cursive;font-size:1.3rem;position:relative}
+.card .body{
+  max-height:0;overflow:hidden;transition:max-height .6s ease,margin .4s;position:relative;
+}
+.card.open .body{max-height:600px;margin-top:14px}
+.card .msg{font-size:1rem;line-height:1.7;margin-bottom:16px}
+.vbtn{
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+  background:var(--deep);color:#fff;padding:11px 22px;border-radius:999px;
+  font-size:.9rem;font-weight:500;transition:transform .2s,background .2s;
+}
+.vbtn:hover{transform:scale(1.05);background:var(--wine)}
+.vbtn.soon{background:rgba(0,0,0,.2);cursor:default}
+.vbtn.soon:hover{transform:none}
+.card.unlocked{cursor:pointer}
+.card.unlocked:hover{transform:translateY(-4px)}
+.card.today{animation:glow 2.4s ease-in-out infinite}
+.card .badge{
+  display:none;position:absolute;left:28px;top:-1px;background:var(--rose);color:#fff;
+  font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;
+  border-radius:0 0 12px 12px;font-weight:500;
+}
+.card.today .badge{display:block}
+@keyframes glow{
+  0%,100%{box-shadow:0 12px 30px rgba(122,44,67,.18),0 0 0 0 rgba(226,103,127,.5)}
+  50%{box-shadow:0 12px 40px rgba(122,44,67,.25),0 0 0 10px rgba(226,103,127,0)}
+}
+/* locked */
+.card.locked{filter:grayscale(.55) brightness(.97);cursor:not-allowed}
+.card.locked .deco{filter:blur(6px);opacity:.5}
+.lock-row{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:.92rem;position:relative}
+.lock-row .l{font-size:1.4rem}
+.card.shake{animation:shake .5s}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+/* 8 themes */
+.t0{background:linear-gradient(135deg,#ffd1dc,#ffeef2)}
+.t1{background:linear-gradient(135deg,#ffe0b8,#fff1de)}
+.t2{background:linear-gradient(135deg,#e5d4ff,#f6efff)}
+.t3{background:linear-gradient(135deg,#c9ecff,#eaf7ff)}
+.t4{background:linear-gradient(135deg,#ffc9c9,#ffe9e0)}
+.t5{background:linear-gradient(135deg,#d3f0d6,#f0fbf0)}
+.t6{background:linear-gradient(135deg,#ffd6f0,#fff0fa)}
+.t7{background:linear-gradient(135deg,#fde7a8,#fff7da)}
+
+/* ---------- TODAY'S ENVELOPE ---------- */
+#today{background:linear-gradient(180deg,transparent,rgba(255,217,226,.55),transparent);max-width:none}
+#today .inner{max-width:760px;margin:0 auto}
+.envelope{
+  width:min(440px,92%);margin:0 auto;cursor:pointer;position:relative;
+  transition:transform .3s;
+}
+.envelope:hover{transform:scale(1.03)}
+.env-paper{
+  background:linear-gradient(135deg,#fff,#fff3f5);border-radius:18px;padding:34px 28px;
+  box-shadow:var(--shadow);border:1px solid rgba(226,103,127,.25);
+}
+.env-seal{font-size:3.4rem;display:block;margin-bottom:6px;animation:beat 1.6s infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+#today-msg{display:none;margin-top:6px}
+#today-msg p{font-family:'Dancing Script',cursive;font-size:1.7rem;line-height:1.45;color:var(--deep);margin-bottom:18px}
+.envelope.opened .tap{display:none}
+.envelope.opened #today-msg{display:block;animation:fadeIn .8s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ---------- DON'T CRY ---------- */
+#cry{max-width:760px}
+.breathe-wrap{margin:30px auto}
+.breathe{
+  width:150px;height:150px;border-radius:50%;margin:0 auto;
+  background:radial-gradient(circle,#ffb3c6,#e2677f);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;
+  animation:breathe 8s ease-in-out infinite;box-shadow:0 0 50px rgba(226,103,127,.5);
+}
+@keyframes breathe{0%,100%{transform:scale(.7)}50%{transform:scale(1.15)}}
+.breathe-label{margin-top:16px;font-size:.9rem;color:var(--deep)}
+.btn{
+  border:0;cursor:pointer;font-family:inherit;font-size:1rem;font-weight:500;
+  background:var(--rose);color:#fff;padding:14px 30px;border-radius:999px;
+  box-shadow:0 8px 20px rgba(226,103,127,.4);transition:transform .2s;
+}
+.btn:hover{transform:translateY(-3px)}
+#cry-card{
+  margin:28px auto 0;max-width:520px;background:#fff;border-radius:22px;padding:26px;
+  box-shadow:var(--shadow);font-size:1.05rem;line-height:1.7;display:none;
+  border:1px dashed rgba(226,103,127,.5);
+}
+#cry-card.show{display:block;animation:fadeIn .6s}
+.promise{
+  margin-top:40px;font-family:'Dancing Script',cursive;font-size:1.9rem;color:var(--deep);
+}
+
+footer{text-align:center;padding:40px 20px 60px;color:var(--rose);font-family:'Dancing Script',cursive;font-size:1.5rem}
+
+/* toast */
+#toast{
+  position:fixed;left:50%;bottom:30px;transform:translate(-50%,100px);
+  background:var(--wine);color:#fff;padding:14px 24px;border-radius:999px;z-index:100;
+  transition:transform .4s;font-size:.92rem;max-width:90vw;text-align:center;
+}
+#toast.show{transform:translate(-50%,0)}
+
+/* ---------- LOGIN SCREEN ---------- */
+html.locked body{overflow:hidden}
+html.authed #login{display:none}
+#login{
+  position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;
+  padding:20px;overflow:hidden;
+  background:linear-gradient(160deg,#fff7f2 0%,#ffd9e2 55%,#ffc4d3 100%);
+  transition:opacity .7s,visibility .7s;
+}
+#login.hide{opacity:0;visibility:hidden}
+#login .lhearts span{position:absolute;bottom:-40px;opacity:.5;animation:floatUp linear infinite;pointer-events:none}
+#login-box{
+  position:relative;z-index:2;width:min(400px,100%);text-align:center;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(10px);
+  border-radius:28px;padding:40px 30px;box-shadow:0 24px 60px rgba(122,44,67,.25);
+  border:1px solid rgba(226,103,127,.25);
+}
+#login-box .seal{font-size:3.4rem;display:block;animation:beat 1.6s infinite}
+#login-box h1{color:var(--deep);font-size:1.7rem;margin:8px 0 4px;line-height:1.4}
+#login-box .lsub{font-family:'Dancing Script',cursive;font-size:1.35rem;color:var(--rose);margin-bottom:22px}
+.lfield{position:relative;margin-bottom:14px}
+.lfield input{
+  width:100%;padding:15px 20px;border-radius:999px;border:1.5px solid rgba(226,103,127,.4);
+  font-family:inherit;font-size:1rem;color:var(--ink);background:#fff;outline:none;text-align:center;
+  transition:border-color .2s,box-shadow .2s;
+}
+.lfield input:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(226,103,127,.18)}
+.leye{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  background:none;border:0;cursor:pointer;font-size:1.2rem;
+}
+#login-box .btn{width:100%;margin-top:6px;padding:15px}
+#login-err{min-height:24px;margin-top:14px;font-size:.92rem;color:#c0334f;line-height:1.6}
+#login-hint{font-size:.85rem;color:var(--deep);opacity:.8}
+#login-box.shake{animation:shake .5s}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="login">
+  <div class="lhearts" id="lhearts"></div>
+  <form id="login-box" dir="rtl" autocomplete="off">
+    <span class="seal">💌</span>
+    <h1>احبك يا صغيرتي ز حتى ان كانت المسافات بيننا</h1>
+    <p class="lsub">اكتبي اسم المستخدم وكلمة السر</p>
+
+    <div class="lfield"><input id="l-user" type="text" placeholder="اسم المستخدم" autocomplete="off" autocapitalize="none" required></div>
+    <div class="lfield">
+      <input id="l-pass" type="password" placeholder="كلمة السر" autocomplete="off" required>
+      <button type="button" class="leye" id="l-eye" aria-label="Show password">👁️</button>
+    </div>
+
+    <button class="btn" type="submit">افتحي 💗</button>
+    <p id="login-err"></p>
+    <p id="login-hint"></p>
+  </form>
+</div>
+
+<nav>
+  <a class="logo" href="#home">Us 💗</a>
+  <button class="burger" id="burger" aria-label="Menu">☰</button>
+  <ul class="nav-links" id="links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#today">Go see what I want to say to you today</a></li>
+    <li><a href="#cry">Don't dare to cry as you promised me</a></li>
+  </ul>
+</nav>
+
+<!-- ================= HOME ================= -->
+<header id="home">
+  <div class="hero-bg-hearts" id="hearts"></div>
+  <div id="float-layer"></div>
+
+  <p class="eyebrow">For my favorite person</p>
+  <h1>40 days apart,<br><em>one heart</em> together</h1>
+  <p class="sub" id="hero-sub">I'm only a few days away from you, never far from your heart. Open one card a day — I left a piece of me inside each one.</p>
+  <div class="counter" id="counter">💗 <span id="counter-text"></span></div>
+
+  <div class="hero-photo">
+    <div class="placeholder"><b>📸</b><span>Put your photo at <code>images/hero.jpg</code></span></div>
+    <img id="hero-img" alt="Our photos" style="display:none">
+  </div>
+
+  <a href="#days" class="scroll-hint">Your 40 cards are waiting ↓</a>
+</header>
+
+<!-- ================= 40 CARDS ================= -->
+<main id="days">
+  <h2>Your 40 cards</h2>
+  <p class="lead">Each card unlocks on its own day. No peeking ahead, my love 😘</p>
+  <div class="cards" id="cards"></div>
+</main>
+
+<!-- ================= TODAY ================= -->
+<section id="today" class="block">
+  <div class="inner">
+    <h2>What I want to say to you today</h2>
+    <p class="lead" id="today-lead">Tap the envelope.</p>
+    <div class="envelope" id="envelope">
+      <div class="env-paper">
+        <span class="env-seal">💌</span>
+        <div class="tap script" style="font-size:1.5rem;color:var(--rose)">Tap to open</div>
+        <div id="today-msg">
+          <p id="today-text"></p>
+          <div id="today-video"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DON'T CRY ================= -->
+<section id="cry" class="block">
+  <h2>Don't dare to cry 🥺</h2>
+  <p class="lead">You promised me. But if your eyes get a little teary, do this for me.</p>
+
+  <div class="breathe-wrap">
+    <div class="breathe">breathe</div>
+    <p class="breathe-label">Slowly in… slowly out… I'm breathing with you.</p>
+  </div>
+
+  <button class="btn" id="cry-btn">I'm about to cry 💧</button>
+  <div id="cry-card"></div>
+
+  <p class="promise">Promise me. Smile. I'll be home soon. 💍</p>
+</section>
+
+<footer>Made with all my love, just for you 💗</footer>
+<div id="toast"></div>
+
+<script>
+/* =====================================================
+   ✏️  EDIT THIS PART ONLY  ✏️
+   ===================================================== */
+const CONFIG = {
+  startDate: "2026-10-14",     // Day 1 (YYYY-MM-DD). Card 1 unlocks on this date.
+  totalDays: 40,
+  heroImage: "Images/Love you more than you think.png", // your big photo / collage
+  devUnlockAll: false           // set true ONLY to test locally, then back to false
+};
+
+/* 🔐 LOGIN — the only username and password that open the site.
+   (Username is not case-sensitive. Password is.)
+   HINT shows up after 2 wrong tries. Leave "" for no hint. */
+const LOGIN = {
+  username: "manoonty",
+  password: "1642005",
+  hint: "b7bk",
+  remember: true   // true = she only logs in once on her phone
+};
+
+/* Paste your Google Drive video links here — one per day (Day 1 first).
+   Leave "" if there's no video yet (the button will say "coming soon"). */
+const VIDEOS = [
+  "https://drive.google.com/file/d/1oqKUtX3eCtJXafnpqxdZrS8e682ST-pH/view?usp=drive_link", "https://drive.google.com/file/d/1EVKeuJgV5CXIZn0eCWFYniPu0KnGh7LM/view?usp=drive_link", "https://drive.google.com/file/d/1hmO2nrLa7Z6vp-ifUqQRdgvdTuV7r3gV/view?usp=sharing", "https://drive.google.com/file/d/1bgWrCEsxFIHxEI4k7Jm8WvVKq5KsjvO_/view?usp=drive_link", "https://drive.google.com/file/d/1bmsVNMCYUO0wmzl4l-FFrkM9Ih-0B2R5/view?usp=sharing",      // Day 1-5
+  "https://drive.google.com/file/d/1wG3ytJGClkTFnGT4NepV7LtE6aaWgGql/view?usp=sharing", "https://drive.google.com/file/d/1qNhvIGGaavbCYQcDDAcHg9lKpePp4HvN/view?usp=sharing", "https://drive.google.com/file/d/16Rf3B9qeZVGTSai81LijKIRzB-cTSlne/view?usp=sharing", "https://drive.google.com/file/d/1TsvhZdlOJjvPz329mBB8bXII8WeQdfEU/view?usp=sharing", "https://drive.google.com/file/d/1jWOlQC6d-6-xj0mVoWymsRJ0fS2aMUhu/view?usp=drive_link",      // Day 6-10
+  "https://drive.google.com/file/d/1yHTtbc97ueJC3U1H4hzuFWj_uOEfWnRp/view?usp=sharing", "https://drive.google.com/file/d/1-BrlMUa38QrfhYo7Q7K4RdnROHnwdyUz/view?usp=sharing", "https://drive.google.com/file/d/1LDoUH9GaVxxIkvSI-RT75BT_vqL0qFAr/view?usp=sharing", "https://drive.google.com/file/d/1OFTDTLn514yzRRjI-2H-UNqTYxKsQdTA/view?usp=sharing", "https://drive.google.com/file/d/1Mh5CnZBtUL3rGNaHdJrGPlcVZZRcG6Fa/view?usp=sharing",      // Day 11-15
+  "https://drive.google.com/file/d/1Eff-AhW4d2hSP-7GdAZZ-vcpbdsyEUIG/view?usp=sharing", "https://drive.google.com/file/d/1XQvF4kDkqb3IO6NMQjz4RHz2vtP6sO_a/view?usp=sharing", "https://drive.google.com/file/d/15kTnV-SuJxAPgbnkEvW34R8-m50QiNsW/view?usp=sharing", "https://drive.google.com/file/d/1kkMGZOQ8bPLyX-zrn9ZdZlgYi_bLYJCf/view?usp=drive_link", "https://drive.google.com/file/d/1jle2QSfgenUPAiE2WQhWsQ58am6iKdjX/view?usp=sharing",      // Day 16-20
+  "https://drive.google.com/file/d/1oDsBSSM1MTASlbjsXb2BJC6DWVhxND6M/view?usp=sharing", "https://drive.google.com/file/d/1px5W90ODta5cBkHKh9pPfc8k1eVYo_h-/view?usp=sharing", "", "", "",      // Day 21-25
+  "", "", "", "", "",      // Day 26-30
+  "", "", "", "", "",      // Day 31-35
+  "", "", "", "", ""       // Day 36-40
+];
+
+/* Message inside each daily card (Day 1 first). Change any of them! */
+
+
+/* رسايل كل يوم ليها ❤️ */
+const DAY_MESSAGES = [
+  "أول يوم يا نور عيني و حياتي اوعي تزعلي او تخافي ها انا جنبك و مش بعاد عن بعض انا هنا جنبك اهو زي ما قولتيلي مدي ايدك هتلاقيني .عايزك تعرفي إن قلبي معاكي حتى وأنا في الجيييش . خليكي قوية يا بنوتي زي ما انا عودتك ديما ، وكل يوم هيعدي هيقربني منك أكتر و هيخلينا نوصل للي بنحلم بيه يا حبيبة عمري . ❤️",
+
+  "صباح الخير يا روح قلبي.. قومي اشربي مية وكلي كويس، ومتنسيش تبتسمي كده ابتسامتك اللي بتجنني و موقعاني ديما ايواااااا هي ديه . فيه حد هنا بيفكر فيكي اربعة و عشرين ساعة و هو كويس ولله ما تقلقيش انتي بس خليكي كويسة و هو هيبقى زي الفل، بحبك قد الكوون كله.",
+
+  "لو وحشتك النهارده، افتحي صورنا وبصي عليها شوية.. وتخيلي إني قاعد جنبك وببصلك بنفس البصة اللي ببصهالك كل مرة ايوا من اللي بفضل سرحان فيهم لعنيكي دول و مش بعرف اودي وشي الناحية التانية 👀.",
+
+  "عارفة إيه أحلى حاجة حصلتلي؟ إنك بقيتي في حياتي. ومهما كنت فين، ده مش هيغير إنك أحلى حاجة ربنا رزقني بيها.",
+
+  "يا نونااااااي الدنيا هنا فل الفل الفول اللي بالسوس طعمه يهبلللل تحفه تحفه حاجة تجنن المهم انا اول ما اجيلك البيت اما اطلع عايز تعمليلي من المكرونة اللي بالصلصة من ايدككك ده اللي مصبرني هنا .",
+
+  " ازيك يا ست البنات وحشاني اوي اوي اوي بصي يا ستي، عندي طلب كده لو ينفع اوعي تقصري في الاكل او النوم و خلي بالك من نفسك كويس انا اه معاكي و ممكن انفخك لو حسيت بتقصير ها . عايز لما أرجع ألاقي حبيبتي بخير وبضحكتها الحلوة دي. ❤️",
+
+  "عدى أسبوع يا نوني.. أهو يوم ورا يوم بنقرب طارو اهو هوا و حبيبتي مغابتش عني ثانية . وأنا عارف إنك قدها، وفخور بيكي أوي حتى لو مش بعرف أقولك الكلام ده كل يوم.",
+
+  "بصي للقمر النهارده يا حبيبتي.. يمكن اكون في الجيش، بس لسه نفس السما اللي فوقينا. وأنا مهما كنت فين، فيه حتة مني دايمًا عندك. و انتي كلك معايا عشان انتي قلبي ",
+
+  "الرسالة دي كتبتها وأنا فاكر ضحكتك.. أصل أنا عندي مشكلة معاكي، كل ما أفتكر ضحكتك ألاقي نفسي ببتسم لوحدي زي العبيط عرفتي بقى ليه الجيش بتاعي سهل ؟ عشان انتي في حياتي ولله 😂❤️",
+
+  "عشرة أيام يا قلبي.. شايفة؟ أهو الوقت بيعدي، حتى لو ببطء. واحدة واحدة هنعدي الأيام دي كلها، وهييجي اليوم اللي أبقى فيه قدامك بجد و نتجوز بقااااااا.",
+
+  "النهارده عايزك تدلعي نفسك شوية.. هاتي حاجة حلوة، اتفرجي على حاجة كده ها ، واعملي أي حاجة تفرحك. واعتبري ده أمر من حبيبك",
+
+  "عارفة انك وحشاني موت بس عارفة ايه اللي مصبرني ؟ انك مش بتغيبي عن بالي يا نوني ولله يا اجمل و احلى و ارق بنوته في العالم كله.",
+
+  "يا نوناااااااي، لو يومك كان صعب أو حسيتي إنك مخنوقة لاني ساعات كده بنوتي بتتخنق من كل حاجة مرو واكدة، متضغطيش على نفسك يا ماما عشان خطري لو بتحبيني. خدي وقتك معايا انا موجود اهو واهدي، إنتي تستاهلي كل حاجة حلوة زيك كده بس انتي احلى",
+
+  "عارفة نفسي أسمع إيه دلوقتي؟ صوتك وإنتي بتقوليلي صباح الخير.. يمكن كلمة بسيطة منك، بس والله بتفرق معايا أكتر ما تتخيلي بس تعرفي بقى الاجمل ؟ اني سامعه دلوقتي من و انا في الجيش علفكرة 😉",
+
+  "خمستاشر يوم يا حبيبتي.. وكل يوم بتعديه بيفكرني قد إيه إنتي حبيبة قلبي و روحي اللي ديما معايا ما بتفارفني طرفة عين. أتمنى كل message من دول تخليكي تحسي إني قريب منك ولو شوية عشان هما مش مجرد كلام ولله يا نوني ده انا فعلا معاكي ديما زي ما وعدتك ",
+
+  "أيًا كان اللي مضايقك النهارده، افتكري إنك أقوى من أيام كتير صعبة عدت عليكي قبل كده. وأنا واثق فيكي يا بنوتي، نوني، حتى لو ايه حصل حبيبتي محدش يقدر يمسها طول ما انا عايش.",
+
+  "أنا هنا اهو بعد وأعدي الأيام عقبال ما احضن حبيبتي.. بس فيه حاجة واحدة لسه زي ما هي، قلبي اللي سايبه معاكي ومش ناوي يرجعه غير لما أشوفك ",
+
+  "شغلي أغنية بتحبيها النهارده وارقصي كده لوحدك عايزين نتمرن كده للجوااااز ومش عايز حجج! عايز اشوفك مبسوطة وبتضحكي خدي بالك انا شايفك اصلا دلوقتي.",
+
+  "أول ما أرجع، ليا عندك وقت كتير أوي هعوضهولك.. خروجاتنا، ورغينا، وقعدتنا سوا، وكل اللحظات الصغيرة اللي نفسي أعيشها معاكي. لسه لينا أيام حلوة كتير يا حبيبي صح كده ؟ ",
+
+  "أهو قربنا من نص المشوار يا نوني.. عارفة؟ ساعات كل اللي محتاجه عشان أستحمل يوم صعب هو إني أفتكر إن فيه يوم جاي هبقى فيه معاكي تاني.",
+
+  "عشرين يوم يا قلبي.. نص المشوار تقريبًا عدى. عايزك تبقي فخورة بنفسك، عشان أنا فخور بيكي وبصبرك، ومقدر كل يوم بتعديه وإنتي مستنياني و بحبك اوي و بعشقك ها.",
+
+  "بقعد أتخيل أول خروجة لينا لما أرجع.. هنتفسح فين؟ هناكل إيه؟ وهنقعد نتكلم قد إيه؟ 😂 عندي أسئلة كتير، بس أهم حاجة بقى عمو هيقول ايه علياااا هل هيوافق ولا هيخليني اجري وراه اصل انا مش هسيبه غير اما اتجوزك يكون عندك علم ",
+
+  "إنتي عارفة إنك بقيتي الشخص اللي بحب أحكيله أي حاجة؟ حتى لو حاجة تافهة ملهاش أي لازمة.. بحب أحكيهالك لمجرد إنك إنتي اللي بتسمعيني. إنتي راحتي يا نوني. و النهاردة حابب احكيلك اني كويس ولله متقلقيش عليا ابدا انا كل اللي شاغلني هي بنوتي عايزها تبقى كويسة بس و بخير و محافظة على نفسها و على صحتها زي ما وعدتني❤️",
+
+  "لو اليوم حسيتيه بايخ كده خدي ريست يا حبيبتي عادي احنا مش مكن احنا بشر يا قلب بابا ريح النهاردة لو حابب يا نور عيني .",
+
+  "عايزك تخرجي مع صحابك وتضحكي وتنبسطي وتعيشي يومك.. متستنيش ترحعي قبل المغرب ها . أنا عايزك مبسوطة كل يوم يا نور عيني.",
+
+  "يا ريتني أقدر أمسك إيدك دلوقتي وأقولك متقلقيش من أي حاجة.. بس لحد ما أقدر أعمل كده، افتكري إنك اغلى ما املك يا منونتي.",
+
+  "كل يوم الصبح لما الدنيا تنور، بفتكر إن فيه يوم جديد بيقربني من اللحظة اللي هشوفك فيها تاني. وبفضل أتخيل شكلك أول ما نتقابل.. يا ترى هتضحكي ولا هتعيطي ولا الاتنين مع بعض بس لا احنا متفقين نوووو عياط",
+
+  "فاضل شوية يا حبيبتي.. وهنبدأ نعمل كل الحاجات اللي بنحلم بيها سوا. أنا مش ناسي ولا حاجة، حتى الحاجات الصغيرة اللي يمكن إنتي نفسك نسيتي إنك قولتيهالي هنعمل كل حاااجة.",
+
+  "غالبًا إنتي دلوقتي بتقري الرسالة دي وبتبتسمي ابتسامتك اللي بحبها.. ولو فعلًا بتبتسمي، فخلاص أنا مش محتاج حاجة من الدنيا تاني😂❤️ وحشتيني يا منونة قلبي .",
+
+  "تلاتين يوم يا نوني.. شكرًا إنك مستحملاني ومستحملة بُعدي، وشكرًا إنك جزء من حياتي. يمكن مش بعرف أوصفلك دايمًا إنتي ايه بالنسبالي  او انا بحب قد إيه، بس أتمنى تحسي بده في كل حاجة بعملها عشانك. و اولهم الجيش اللي بخلصه عشان اتجوز بنوتي الجميلة اوي ديه",
+
+  "قبل ما تنامي النهارده، عايزك تهدي كده وتنسي أي حاجة تعباكي.. نامي وإنتي مش بتفكري في حاجة ها دماغنا لازم تبقى فاصية و بننام كويس. تصبحي على خير يا حتة من قلبي تصبحي و انتي اهلي كلهم. ❤️",
+
+  "ايه اخبار اللبس النهاردة يا ترى بننزل بهدوم زي ما وعدنا محمد ولا في تغيير عشان هو في الجييش ، بس اوعي ها ده انا شايفك و مراقبك.",
+
+  "خليكي دايمًا فخورة بنفسك يا حبيبتي.. إنتي بتعملي حاجات كتير صعبة اوي، ويمكن ساعات مبتاخديش بالك اصلا بس خدي بالك بقى انك بطلتي الوحيدة.",
+
+  "بصي إحنا وصلنا لفين يا نوني.. فاكرة أول يوم؟ أهو كل ده عدى، ولسه بنقرب من بعض ومن اليوم اللي هنشوف فيه بعض تاني. استحملي شوية كمان يا قلبي قربنا اهو قربنااا ❤️",
+
+  "عايزك تعملي النهارده على الاكل كده غريبة و عبيطة يعمي اختراع كده ايه رأيك؟ .. مع إني مش محتاج أقولك إنك احلى واحدة بتعرفي تطبيخي، دي حاجة أنا عارفها كويس أويييي",
+
+  "فاضل خمس أيام يا حبيبتي.. خمسة بس! مش عارف إنتي حاسة بالوقت عامل إزاي، بس أنا بقيت أتخيل كل تفصيلة في يوم رجوعي. قلبي سبقني وجاي ناحيتك من دلوقتي افتحي الباااااب.",
+
+  "أربعة أيام يا نوني.. جهزي نفسك بقى، عشان أول ما أشوفك غالبًا مش هبطل أحضنك و ابوسك ها وحشتيني بطريقة مش طبيعية ولله.",
+
+  "تلاتة أيام يا روح قلبي.. خلاص قربنا أوي. نفسي الوقت يجري، ونفسي في نفس الوقت أعيش لحظة ما أشوفك حالا كده من غير ما أي حاجة تمنعنيي.",
+
+  "يومين يا حبيبتي.. يومين وأبقى أقربلك من كل الرسائل والصور دي. لو عيطتي متقلقيش، ولو ضحكتي برضه متقلقيش  المهم إني أخيرًا هبقى معاكي و انك بخير قدامي.",
+
+  "يا نوني.. أنا راجعلك ❤️ شكرًا على كل يوم استنيتيني فيه، وعلى كل لحظة كنتي فيها جنبي حتى وإحنا بعيد. أخيرًا هقدر أقولك الكلام ده وأنا باصص في عينيكي: وحشتيني أوي يا حبيبتي، وبحبك أكتر ما الكلام يقدر يوصف."
+];
+
+
+/* 💌 رسايل الكروت (Day 1 .. Day 40) — دي اللي بتظهر جوه كل كارت.
+   مختلفة عن DAY_MESSAGES اللي بتظهر في "Go see what I want to say to you today" */
+const CARD_MESSAGES = [
+  // Day 1
+  "My Nony, this is the beginning of our little countdown. Every day that passes brings me one day closer to you. Until then, keep a little piece of my heart with you. ❤️",
+
+  // Day 2
+  "I wish I could be there right now, holding your hand and reminding you how much you mean to me. Until I can, imagine me giving you the biggest hug ever. 🫂❤️",
+
+  // Day 3
+  "Distance may keep me away from your arms, but it could never take you away from my heart. You're with me in every thought, every prayer, and every little dream. 💗",
+
+  // Day 4 — Your message
+  "لا أنا النهاردة حبيت أقلك إنك أجمل واحدة في الكون كله، إنتي في عيني أجمل من كل الكلام اللي ممكن يتقال في الجمال، وبحبك أوي يا حبيبتي ",
+
+  // Day 5
+  "Some nights, all I want is to hear your voice, tell you about my day, and fall asleep knowing you're okay.you know what i already do that every night",
+
+  // Day 6
+  "One day, this countdown will be nothing but a memory, and I'll be right beside you, laughing about how much we missed each other. That day is getting closer, my love. ",
+
+  // Day 7
+  "A whole week already, my girl! I'm so proud of you for making it through every day. Be gentle with yourself, take care of that beautiful heart, and remember that I'm coming back to you. ❤️",
+
+  // Day 8
+  "If I could send you one thing through this screen, it wouldn't be a message. It would be a hug that lasts until all the missing me finally feels a little easier. 🫂",
+
+  // Day 9
+  "I miss the simplest things about us: your laugh, your voice, your little stories, and even the random things you tell me that make absolutely no sense. ❤️",
+
+  // Day 10
+  "Ten days closer to seeing you again. Just imagine that first moment when I finally get to look into your eyes instead of missing them from far away. ❤️",
+
+  // Day 11 — Your message
+  " حتى وانا مش شايفك  بعيني، إنتي أقرب واحدة لقلبي، وكل يوم بيعدي بيأكدلي إني اخترت أحلى بنت في الدنيا ",
+
+  // Day 12
+  "I wonder if you ever look at the sky and think of me the way I think of you. Maybe we're looking at the same stars, missing each other under the same sky. ❤️",
+
+  // Day 13
+  "My favorite place in the world isn't a city or a beautiful destination. It's wherever I get to be next to you, with your hand in mine and nowhere else to be. ",
+
+  // Day 14
+  "Two weeks of missing you, and somehow my heart stilll finds new ways to love you even more. I didn't know I could miss someone this much until you became my someone. ❤️",
+
+  // Day 15
+  "Halfway through this little collection of messages, but not even close to halfway through all the things I want to tell you when I come back. Save me some time for all our conversations! ❤️",
+
+  // Day 16
+  "Whenever something good happens, you're still the first person I want to tell. And whenever something feels difficult, you're the person I wish I could sit beside. You really are my person. ❤️",
+
+  // Day 17
+  "I hope you never mistake my absence for a lack of love. I'm away because life has placed me here for a while, but my heart has never stopped choosing you. ",
+
+  // Day 18
+  "Close your eyes for a second and imagine me holding you. No countdown, no distance, no goodbye at the end of the day. Just you and me, exactly where we belong. 🫂❤️",
+
+  // Day 19 — Your message
+  "هانت يا روح قلب بابا من جوا عدى الكتير ما فاضل الا القليل جهزتي حاجة الخطوبة ؟",
+
+  // Day 20
+  "Twenty days, my love. Look how far we've come! Every single day you've made it through is another little victory for us. I'm so proud of you, and I'm counting down with you. ❤️",
+
+  // Day 21
+  "The best part of coming back isn't going home or getting some rest. It's knowing that somewhere in that day, I'll finally get to see YOU. Nothing compares to that. ❤️",
+
+  // Day 22
+  "I miss the way you make ordinary days feel special. A simple conversation with you can turn my whole day around. I can't wait to have those little moments back. 💗",
+
+  // Day 23
+  "If missing you could be measured in hugs, I'd owe you a lifetime of them by now. So please prepare yourself, because I'm planning to collect every single one when I return. 🫂❤️",
+
+  // Day 24
+  "You are my favorite thought before I sleep and the thought that makes me smile when I wake up. No matter where I am, there's always a little part of my day that belongs to you. ❤️",
+
+  // Day 25
+  "Twenty-five days down! We're getting closer, sweetheart. Keep smiling, keep taking care of yourself, and keep a little space in your arms for the hug that's waiting for you. ",
+
+  // Day 26
+  "I wish I could pause time during our happiest moments and stay there with you a little longer. But since I can't, I'll just look forward to making a thousand new memories when I return. ❤️",
+
+  // Day 27
+  "Sometimes I imagine telling you all the things I couldn't tell you while I was away. Then I imagine your face as you listen, and suddenly the wait feels worth it. ",
+
+  // Day 28 — Your message
+  "  لو رجع بيا الزمن ألف مرة، هختارك إنتي في كل مرة. عشان قلبي لما عرفك مبقاش عايز حد غيرك. بحبك يا نوني، ومستني اليوم اللي أقولك فيه كل ده وأنا قدامك و تبقي فيه مراتي❤️💗",
+
+  // Day 29
+  "Less than two weeks left, my love! I've imagined our reunion so many times that I might actually forget what to say when I finally see you. So if I just stare at you and smile, you'll know why. ❤️",
+
+  // Day 30
+  "Thirty days of waiting, loving, and missing you. If there's one thing this time apart has taught me, it's that no amount of distance can make me want anyone else. It's always you. ❤️",
+
+  // Day 31
+  "I don't need a perfect day when I come back. I just need an ordinary day with you: your voice, your laugh, your hand in mine, and the comfort of finally being close again. 💗",
+
+  // Day 32
+  "Every goodbye we've had has led to another hello. And this time, I'm holding on to the thought of that hello a little tighter. We're getting there, sweetheart. 🫂❤️",
+
+  // Day 33
+  "One week to go, my girl! Can you believe it? Start thinking about all the stories you're going to tell me, because I'm not letting you get away with a single missing detail. ❤️",
+
+  // Day 34
+  "Six days, my love. I wish I could tell you exactly how excited I am, but I think my face will explain everything when I finally see you. ",
+
+  // Day 35
+  "Five days left! I'm already imagining that first hug. The kind where neither of us wants to let go, because for a little while, the whole world can wait. ❤️🫂",
+
+  // Day 36 — Your message
+  " وحشتيني يا حبيبتي، ووحشني كلامنا وضحكتك وكل تفاصيلك، ومستني اليوم اللي أرجع فيه وأحضنك وأعوضك عن كل لحظة بُعد",
+
+  // Day 37
+  "Three days, sweetheart. Just three! All the missed hugs, all the conversations, all the little moments we've been waiting for are starting to feel real again. ❤️",
+
+  // Day 38
+  "Two more days! I hope you know that the first thing I want when I see you is to hold you close and stay there for a while. I've missed you more than these little messages can ever explain. ❤️",
+
+  // Day 39
+  "Tomorrow, my love. One more sleep, one more sunrise, and we'll be closer to the moment we've been waiting for. I wish I could skip straight to seeing you. ❤️",
+
+  // Day 40
+  "TODAY, MY NONY! ❤️ We've made it through the countdown, and I can't wait to see you again. Thank you for being patient, for being you, and for holding on through the days apart. Now it's time for hugs, laughter, endless talking, and making up for all that missed time. I've missed you so much, my love. I'm coming back to you my beautiful wife isa. 🫂❤️"
+];
+
+/* Random floating messages on the home page */
+const AM_MESSAGES = [
+  "صباح الخير يا روح قلبي ❤️",
+  "اصحي يا نوني يا أجمل حاجة في دنيتي ",
+  "صباح الخير يا حبيبتي، يا رب تكوني نمتي كويس  اويييييييي❤️",
+  "صباح الجمال على ملكة قلبي، يلا ورينا الابتسامة الحلوة دي  هاتي بوسة💕",
+  "أول ما صحيت النهارده جيتي في بالي.. ده زي العادة يعني يا بتنجانا❤️",
+  "صباح الخير يا حبيبتي، كلي حاجة ومتنسيش نفسك وسط يومك 😘",
+  "يوم جديد يا نوني، وحبي ليكي لسه بيزيد كل يوم عن اللي قبله 💗",
+  "عايزك تبتسمي النهارده كتير، ولو محدش قالك إنك قمر  - محدش يقلك غيري اصلا -، فاعتبري إني قولتهالك أهو انتي مزة مش قمر بس❤️",
+  "يا رب يومك يبقى حلو وخفيف على قلبك زيك كده، وتفضلي مبسوطة طول اليوم يا قلبي ❤️",
+  "كل يوم بيعدي بيقربني من الحضن اللي نفسي فيه.. استحملي يا نوني، قربنا ❤️",
+  "صباح الخير على أحلى واحدة في الدنيا.. وحشتيني حتى قبل ما يومي يبدأ يا بنوتي 💕",
+  "اشربي مية وكلي كويس واهتمي بنفسك، عشان فيه عبيط هنا بيقلق عليكي حتى وهو بعيد ❤️"
+];
+
+
+const PM_MESSAGES = [
+   "ايه اخبار  عيون نوني الحلوة ديه.. يا رب يومك يكون عدى على خير يا حبيبتي ❤️",
+  "تصبحي على خير يا روح قلبي، نامي وارتاحي كويس، ويا رب أحلامك تبقى حلوة زيك كده 🌛💕",
+  "يلا يا ستي اقفلي الموبايل ونامي بقى ❤️ ولو حلمتي بيا متصحنيش، خليني أكمل معاكي شوية ",
+  "طب قوليلي كده، أكلتي النهارده كويس ولا كنتي بتنسي نفسك كالعادة؟ ",
+  "بصي للقمر قبل ما تنامي يا نوني.. يمكن أكون ببصله أنا كمان في صورتك، وساعتها نبقى بصينا لنفس الحاجةو هو انتي  💕",
+  "تصبحي على خير يا أجمل حاجة في حياتي.. سيبي كل حاجة تعباكي على جنب ونامي وإنتي مطمنة يا حبيبتي ❤️",
+  "يوم كمان عدى يا نوني.. أهو بنقرب يوم ورا يوم من اليوم اللي هبقى فيه معاكي تاني وأحكيلك كل اللي حصل ❤️",
+  "اتغطي كويس يا حبيبتي، واعتبري اللحاف ده حضني لحد ما أرجع وأحضنك بجد ❤️",
+  "أيًا كان يومك عامل إزاي، خلاص يا ستي اليوم انتهى.. متشيليش هم بكرة دلوقتي، ريحي قلبك ونامي يا كوتي ❤️",
+  "عاملة ايه يا حبيبتي، يا رب النهارده يكون ضحككتك ملت الدنيا كده،و اياكي يوصلي ان حصل العكس ها 💕",
+  "تصبحي على خير يا صاحبتي وحبيبتي وأحن حد على قلبي.. مش عارف إزاي بقيتي كل الناس الحلوة في شخص واحد كده ❤️😴",
+   "عارفة يا نوني؟ أنا فخور بيكي أوي، حتى في الأيام اللي إنتي بتحسي فيها إنك مش قادرة تعملي حاجة انا ديما جنبك اصلا يا عبيطة انتي.. يلا بقى نامي وارتاحي يا حبيبتي، وبكرة نكمل اتفقنا ؟❤️"
+];
+
+
+/* When she's about to cry */
+
+const CRY_MESSAGES = [
+  "حبيبتي يا حبيبة قلبي، مش إنتي وعدتيني؟ مش وعدتيني إنك مش هتعيطي ومش هتزعلي؟ طب أنا دلوقتي هعرف أكلمك إزاي وأنا عارف إنك بتعيطي يا قلب نونو إنتي؟ 😂❤️ يلا يا حبيبتي عشان خاطري، إنتي عارفة إنك أغلى حاجة عندي، صح يا مزتي؟ يلا قومي اغسلي وشك و هاتي بوسة بقى ❤️😘😘",
+
+  " أنا عايزك تاخدي نفس معايا كده، يلا يا قلبي.. نفس كبيييير أوي، أيوه كده، طلعيه بقى بالراحة.. تاني يا حبيبتي، تالت مرة، عاش يا روحي 😂❤️ طب بوسة بقى عشان إنتي شطورة أوي، ممواه ممواه ممواه ممواه 😘😘😘",
+
+  "يا حبيبتي يا نوني، طب هو أنا مش قايلك إني راجعلك؟ أمال بتعيطي ليه بقى يا مزتي؟ 😂❤️ ما إحنا اتفقنا يا قلبي إننا هنستحمل الأيام دي سوا، صح؟ طب يلا امسحي دموعك كده و هاتي حضن لنونو حبيبك  😘❤️",
+
+  "حبيبة قلبي إنتي، طب بصيلي كده.. أيوه بصيلي، عايز أشوف عيون المزة بتاعتي الحلوة دي 😂❤️ إيه ده بس، مين مزعل القمر بتاعي؟ طب تعالي هنا، حضن كبيييير أوي وبوسة على كل خد، وبوسة كمان عشان خاطر عيون حبيبتي 😘😘",
+
+  "يا قلب بابا إنتي، عارفة إنك أغلى حاجة عندي، صح يا حبيبتي؟ طب عارفة إن أنا بحبك قد إيه؟ طب خلاص بقى يا مزتي، عشان خاطري اهدي كده وخدي نفس معايا.. أيوه كده يا حبيبة قلبي، برافو عليكي يا روحي. موواه ممواه ممواه ❤️😘",
+
+  "حبيبتيييي، يا حبيبتي إنتي، طب ما تيجي نتفق اتفاق جديد؟ إن كل ما تزعلي نفتكر إننا هنشوف بعض تاني، وإن كل يوم بيعدي بيقربنا من بعض و اننا هنجهز لخطوبتنا و اني اصلا ديما معاكي ، ماشي يا قلبي؟ طب يلا بقى عايز أشوف ضحكتك الحلوة دي، حتى لو ضحكة صغيرة أوي، عشان خاطري يا مزتي 😂❤️",
+
+  "بصي يا حبيبتي، أنا عارف إنك وحشتيني وإن الأيام ساعات بتبقى صعبة، بس أنا عايزك تفتكري إننا مع بعض يا قلب محمد، حتى لو مش قادر أكلمك كل يوم. ولما تزعلي افتكري كلامنا وخدي نفس بالراحة، وقولي لنفسك إن نونو راجعلي.. ماشي يا حبيبتي؟ طب بوسة بقى، لا مش واحدة، مليون كمان 😘❤️❤️"
+];
+
+
+
+/* =====================================================
+   ⚙️  CODE — you don't need to touch below  ⚙️
+   ===================================================== */
+const DAY_MS = 86400000;
+const EMOJIS = ["🌹","💌","🌙","☀️","🧸","✨","🕊️","🍓","🦋","🌷","💍","🎀","☕","🌸","🍫","⭐"];
+const HINTS = ["A little love note inside…","Tap to open me 💌","I made this one just for you","Something sweet is waiting","Open your heart (and this card)"];
+
+function parseStart(){
+  const [y,m,d] = CONFIG.startDate.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+function midnight(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function dayNumber(){ // 1 = start day, 0 or less = before start
+  return Math.round((midnight(new Date()) - parseStart()) / DAY_MS) + 1;
+}
+function dateOfDay(n){
+  const s = parseStart();
+  return new Date(s.getFullYear(), s.getMonth(), s.getDate() + (n-1));
+}
+const fmt = d => d.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.t); toast.t = setTimeout(()=>t.classList.remove('show'),2800);
+}
+const safeUrl = u => /^https?:\/\//i.test(u) ? u : "";
+
+/* ---- navbar ---- */
+const links = document.getElementById('links');
+document.getElementById('burger').onclick = () => links.classList.toggle('show');
+links.querySelectorAll('a').forEach(a => a.onclick = () => links.classList.remove('show'));
+
+/* ---- hero photo ---- */
+(function(){
+  const img = document.getElementById('hero-img');
+  img.onload = () => { img.style.display='block'; document.querySelector('.placeholder').style.display='none'; };
+  img.src = CONFIG.heroImage;
+})();
+
+/* ---- background hearts ---- */
+(function(){
+  const wrap = document.getElementById('hearts');
+  const sym = ["💗","💕","🤍","🌸"];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('span');
+    s.textContent = sym[i % sym.length];
+    s.style.left = Math.random()*100 + '%';
+    s.style.fontSize = (14 + Math.random()*22) + 'px';
+    s.style.animationDuration = (12 + Math.random()*14) + 's';
+    s.style.animationDelay = (-Math.random()*20) + 's';
+    wrap.appendChild(s);
+  }
+})();
+
+/* ---- counter ---- */
+(function(){
+  const n = dayNumber(), el = document.getElementById('counter-text');
+  const total = CONFIG.totalDays;
+  if(n < 1) el.textContent = `Our 40 days begin in ${1-n} day${1-n===1?'':'s'}`;
+  else if(n <= total) el.textContent = `Day ${n} of ${total} · ${total-n} to go`;
+  else el.textContent = `All ${total} days done. Welcome home, my love!`;
+})();
+
+/* ---- cards ---- */
+(function(){
+  const box = document.getElementById('cards');
+  const n = dayNumber();
+  for(let i=1;i<=CONFIG.totalDays;i++){
+    const unlocked = CONFIG.devUnlockAll || n >= i;
+    const isToday = !CONFIG.devUnlockAll && n === i;
+    const card = document.createElement('article');
+    card.className = `card t${(i-1)%8} ${unlocked?'unlocked':'locked'} ${isToday?'today':''}`;
+    const url = safeUrl(VIDEOS[i-1] || "");
+    const dateTxt = fmt(dateOfDay(i));
+    let inner = `<span class="badge">Today</span>
+      <div class="deco">${EMOJIS[(i*3) % EMOJIS.length]}</div>
+      <div class="card-top"><span class="day">Day ${i}</span><span class="date">${dateTxt}</span></div>`;
+    if(unlocked){
+      inner += `<p class="hint">${HINTS[i % HINTS.length]}</p>
+        <div class="body">
+          <p class="msg">${CARD_MESSAGES[i-1] || ""}</p>
+          ${url ? `<a class="vbtn" href="${url}" target="_blank" rel="noopener">▶ Watch my video</a>`
+                : `<span class="vbtn soon">Video coming soon</span>`}
+        </div>`;
+    } else {
+      const left = i - n;
+      inner += `<div class="lock-row"><span class="l">🔒</span><span>Opens on ${dateTxt} · in ${left} day${left===1?'':'s'}</span></div>`;
+    }
+    card.innerHTML = inner;
+    card.addEventListener('click', e => {
+      if(e.target.closest('a')) return;
+      if(unlocked){
+        card.classList.toggle('open');
+        card.querySelector('.hint').style.display = card.classList.contains('open') ? 'none' : '';
+      } else {
+        card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+        toast(`Patience, my love 💗 this one opens on ${dateTxt}`);
+      }
+    });
+    box.appendChild(card);
+  }
+  // auto-open today's card once so she sees it
+  const t = box.querySelector('.card.today');
+  if(t){ t.classList.add('open'); t.querySelector('.hint').style.display='none'; }
+})();
+
+/* ---- today's envelope ---- */
+(function(){
+  const n = dayNumber(), total = CONFIG.totalDays;
+  const env = document.getElementById('envelope');
+  const lead = document.getElementById('today-lead');
+  const text = document.getElementById('today-text');
+  const vbox = document.getElementById('today-video');
+  let idx;
+  if(n < 1){
+    lead.textContent = `Our 40 days start on ${fmt(dateOfDay(1))}. Come back then 💗`;
+    env.querySelector('.tap').textContent = 'Not yet, my love 🔒';
+    env.style.cursor = 'not-allowed';
+    env.onclick = () => toast('Soon! Your first message opens on ' + fmt(dateOfDay(1)));
+    return;
+  }
+  idx = Math.min(n, total);
+  lead.textContent = n <= total ? `Day ${n}. Today's words are only for you.` : 'The days are over, but this message stays forever.';
+  text.textContent = DAY_MESSAGES[idx-1];
+  const url = safeUrl(VIDEOS[idx-1] || "");
+  vbox.innerHTML = url ? `<a class="vbtn" href="${url}" target="_blank" rel="noopener">▶ Watch today's video</a>` : '';
+  env.onclick = e => { if(!e.target.closest('a')) env.classList.add('opened'); };
+})();
+
+/* ---- don't cry ---- */
+(function(){
+  const card = document.getElementById('cry-card');
+  let last = -1;
+  document.getElementById('cry-btn').onclick = () => {
+    let r; do { r = Math.floor(Math.random()*CRY_MESSAGES.length); } while(r === last && CRY_MESSAGES.length > 1);
+    last = r;
+    card.classList.remove('show'); void card.offsetWidth;
+    card.textContent = CRY_MESSAGES[r];
+    card.classList.add('show');
+  };
+})();
+
+/* ---- random floating AM / PM messages (home page) ---- */
+(function(){
+  const layer = document.getElementById('float-layer');
+  const home = document.getElementById('home');
+  let visible = true;
+  new IntersectionObserver(es => visible = es[0].isIntersecting, {threshold:.05}).observe(home);
+
+  function spawn(){
+    if(!visible || document.hidden || layer.children.length >= 4) return;
+    const isAM = new Date().getHours() < 12;
+    const list = isAM ? AM_MESSAGES : PM_MESSAGES;
+    const m = document.createElement('div');
+    m.className = 'float-msg' + (isAM ? '' : ' pm');
+    m.textContent = list[Math.floor(Math.random()*list.length)];
+    m.style.left = (4 + Math.random()*68) + '%';
+    m.style.setProperty('--dur', (11 + Math.random()*6) + 's');
+    m.style.setProperty('--drift', (Math.random()*160 - 80) + 'px');
+    m.addEventListener('animationend', e => { if(e.animationName === 'rise' || e.animationName === 'pop') m.remove(); });
+    m.addEventListener('click', () => { m.classList.add('pop'); });
+    layer.appendChild(m);
+  }
+  setTimeout(spawn, 1200);
+  (function loop(){ spawn(); setTimeout(loop, 3500 + Math.random()*3500); })();
+})();
+
+/* ---- login screen ---- */
+(function(){
+  const root = document.documentElement;
+  const login = document.getElementById('login');
+  if(root.classList.contains('authed')) return;
+
+  /* background hearts */
+  const wrap = document.getElementById('lhearts'), sym = ["💗","💕","🤍","🌸"];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('span');
+    s.textContent = sym[i % sym.length];
+    s.style.left = Math.random()*100 + '%';
+    s.style.fontSize = (14 + Math.random()*22) + 'px';
+    s.style.animationDuration = (12 + Math.random()*14) + 's';
+    s.style.animationDelay = (-Math.random()*20) + 's';
+    wrap.appendChild(s);
+  }
+
+  const box = document.getElementById('login-box');
+  const user = document.getElementById('l-user');
+  const pass = document.getElementById('l-pass');
+  const err = document.getElementById('login-err');
+  const hint = document.getElementById('login-hint');
+  let tries = 0;
+
+  document.getElementById('l-eye').onclick = () => {
+    pass.type = pass.type === 'password' ? 'text' : 'password';
+  };
+
+  box.addEventListener('submit', e => {
+    e.preventDefault();
+    const okUser = user.value.trim().toLowerCase() === LOGIN.username.toLowerCase();
+    const okPass = pass.value === LOGIN.password;
+    if(okUser && okPass){
+      if(LOGIN.remember){ try{ localStorage.setItem('us_auth','1'); }catch(x){} }
+      login.classList.add('hide');
+      root.classList.remove('locked');
+      setTimeout(() => { login.style.display = 'none'; }, 800);
+    } else {
+      tries++;
+      err.textContent = 'مش دي يا قلبي 🥺 جربي تاني';
+      if(LOGIN.hint && tries >= 2) hint.textContent = '💡 ' + LOGIN.hint;
+      box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
+      pass.value = ''; pass.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
